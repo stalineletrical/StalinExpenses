@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Receipt Expense Tracker</title>
+
+  <!-- Tesseract OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <!-- XLSX Library -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>Receipt Expense Tracker</h2>
+
+  <input type="file" id="receiptInput" accept="image/*" multiple />
+
+  <br>
+
+  <button onclick="processReceipts()">Process Receipts</button>
+  <button onclick="downloadExcel()">Download Excel</button>
+
+  <div id="status"></div>
+
+  <table id="expenseTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Shop Name</th>
+        <th>Category</th>
+        <th>Total Amount</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
