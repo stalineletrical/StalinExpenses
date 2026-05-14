@@ -9,6 +9,9 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <!-- XLSX Library -->
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
@@ -18,9 +21,9 @@
 
 <div class="container">
 
-  <h2>Receipt Expense Tracker</h2>
+  <h2>Receipt Expense Tracker (PDF Supported)</h2>
 
-  <input type="file" id="receiptInput" accept="image/*" multiple />
+  <input type="file" id="receiptInput" accept="application/pdf,image/*" multiple />
 
   <br>
 
