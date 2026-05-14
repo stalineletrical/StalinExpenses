@@ -1,66 +1,69 @@
 let expenses = [];
-function detectCategory(text) {
 
-  const lowerText = text.toLowerCase();
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  for (const category in categoryKeywords) {
+const categoryKeywords = {
+  "Vegetable": ["tomato", "potato", "onion", "vegetable", "carrot"],
+  "Fruits": ["apple", "banana", "orange", "fruit", "grapes"],
+  "Drinks and Alcohol": ["beer", "wine", "vodka", "whiskey", "cola", "juice", "drink"],
+  "Meat": ["chicken", "mutton", "beef", "fish", "meat"],
+  "Transport": ["fuel", "diesel", "petrol", "train", "bus", "ticket", "uber", "taxi"],
+  "Snacks": ["chips", "snack", "biscuit", "cookies"],
+  "Meal": ["meal", "burger", "pizza", "rice", "dinner", "lunch"]
+};
 
-    for (const keyword of categoryKeywords[category]) {
+async function processReceipts() {
 
-      if (lowerText.includes(keyword)) {
-        return category;
-      }
-    }
-  }
+  const files = document.getElementById("receiptInput").files;
 
-  return "Others";
-}
-
-function verifyMealTotal(text, detectedTotal) {
-
-  let finalTotal = detectedTotal;
-
-  const discountRegex = /discount\s*[-:]?\s*(\d+\.\d{2})/i;
-
-  const match = text.match(discountRegex);
-
-  if (match) {
-
-    const discount = parseFloat(match[1]);
-
-    finalTotal = detectedTotal - discount;
-  }
-
-  return finalTotal.toFixed(2);
-}
-
-function addToTable(data) {
-
-  const tbody = document.querySelector("#expenseTable tbody");
-
-  const row = document.createElement("tr");
-
-  row.innerHTML = `
-    <td>${data.date}</td>
-    <td>${data.shopName}</td>
-    <td>${data.category}</td>
-    <td>${data.totalAmount}</td>
-  `;
-
-  tbody.appendChild(row);
-}
-
-function downloadExcel() {
-
-  if (expenses.length === 0) {
-    alert("No data available.");
+  if (files.length === 0) {
+    alert("Please upload PDF or image receipts.");
     return;
   }
 
-  const worksheet = XLSX.utils.json_to_sheet(expenses);
+  document.getElementById("status").innerText = "Processing receipts...";
 
-  const workbook = XLSX.utils.book_new();
+  for (const file of files) {
 
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+    let text = "";
 
-  XLSX.writeFile(workbook, "Expense_Report.xlsx");
+      if (file.type === "application/pdf") {
+        text = await extractTextFromPDF(file);
+      } else {
+        text = await extractTextFromImage(file);
+      }
+
+    console.log(text);
+
+    const extractedData = extractReceiptData(text);
+
+    expenses.push(extractedData);
+
+    addToTable(extractedData);
+  }
+
+  document.getElementById("status").innerText = "Processing completed.";
+}
+
+async function extractTextFromImage(file) {
+
+  const result = await Tesseract.recognize(file, 'eng');
+
+  return result.data.text;
+}
+
+async function extractTextFromPDF(file) {
+
+  const arrayBuffer = await file.arrayBuffer();
+
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+  let fullText = "";
+
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+
+    const page = await pdf.getPage(pageNum);
+
+    const viewport = page.getViewport({ scale: 2 });
+}
